@@ -1,0 +1,14 @@
+.mainContainer {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  .leftContainer {
+    width: 80%;
+    background: var(--faded-white);
+  }
+  .rightContainer {
+    width: 20%;
+    background: var(--black);
+    padding: 1.188rem 1.5rem 1.063rem;
+  }
+}
