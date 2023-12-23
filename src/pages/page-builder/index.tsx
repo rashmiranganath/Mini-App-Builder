@@ -1,15 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, DragEvent } from "react";
 import styles from "./miniAppbuilder.module.scss";
 import Modal from "../../components/modal";
 import CustomForm from "../../components/form";
 import DropZone from "../../components/droppedElements";
 
-const MiniAppBuilder = ({ isdraggedElement }) => {
-  const [draggedElement, setDraggedElement] = useState({});
-  const [droppedElements, setDroppedElements] = useState([]);
+interface MiniAppBuilderProps {
+  isdraggedElement: {
+    id?: string;
+    type: string;
+    title: string;
+    name: string;
+  };
+}
+
+const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
+  isdraggedElement,
+}) => {
+  const [droppedElements, setDroppedElements] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const [elementInfo, setElementInfo] = useState([
+  const [elementInfo, setElementInfo] = useState<
+    Array<{ label: string; value: string }>
+  >([
     { label: "text", value: "" },
     { label: "X", value: "" },
     { label: "Y", value: "" },
@@ -17,28 +29,58 @@ const MiniAppBuilder = ({ isdraggedElement }) => {
     { label: "Font Weight", value: "" },
   ]);
 
-  const onDrop = (e) => {
+  const onDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    setIsOpen(true);
-    const mouseX = e.clientX;
-    const mouseY = e.clientY;
-    setElementInfo((prevState) => [
-      ...prevState.map((item) => {
-        if (item.label === "X") {
-          return { ...item, value: mouseX };
-        } else if (item.label === "Y") {
-          return { ...item, value: mouseY };
-        } else {
-          return item;
-        }
-      }),
-    ]);
+
+    const draggedElementId = e.dataTransfer.getData("text/plain");
+    console.log(draggedElementId);
+
+    if (draggedElementId) {
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+
+      const existingElement = droppedElements.find(
+        (el) => el.element.id === draggedElementId
+      );
+
+      if (existingElement) {
+        const updatedElements = droppedElements.map((item) =>
+          item.element.id === draggedElementId
+            ? {
+                ...item,
+                elementdetails: {
+                  ...item.elementdetails,
+                  X: mouseX,
+                  Y: mouseY,
+                },
+              }
+            : item
+        );
+
+        setDroppedElements(updatedElements);
+      } else {
+        setElementInfo((prevState) => [
+          ...prevState.map((item) => {
+            if (item.label === "X") {
+              return { ...item, value: mouseX };
+            } else if (item.label === "Y") {
+              return { ...item, value: mouseY };
+            } else {
+              return item;
+            }
+          }),
+        ]);
+
+        setIsOpen(true);
+      }
+    }
   };
 
-  const onDragOver = (event) => {
+  const onDragOver = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
   };
-  const handleSubmit = (values) => {
+
+  const handleSubmit = (values: any) => {
     console.log(values, "values");
     setDroppedElements((prev) => {
       const indexToUpdate = prev.findIndex(
@@ -56,13 +98,8 @@ const MiniAppBuilder = ({ isdraggedElement }) => {
         return [...prev, { element: isdraggedElement, elementdetails: values }];
       }
     });
-
-    setDraggedElement({});
   };
 
-  useEffect(() => {
-    setDraggedElement(isdraggedElement);
-  }, [isdraggedElement]);
   return (
     <>
       <div
@@ -71,7 +108,7 @@ const MiniAppBuilder = ({ isdraggedElement }) => {
         onDrop={(event) => onDrop(event)}
         id="dynamicElementsContainer"
       >
-        {isOpen ? (
+        {isOpen && (
           <Modal setIsOpen={setIsOpen}>
             <CustomForm
               elementInfo={elementInfo}
@@ -79,10 +116,9 @@ const MiniAppBuilder = ({ isdraggedElement }) => {
               isModalClosed={isOpen}
             />
           </Modal>
-        ) : (
-          droppedElements.length > 0 && (
-            <DropZone droppedElements={droppedElements} />
-          )
+        )}
+        {!isOpen && droppedElements.length > 0 && (
+          <DropZone droppedElements={droppedElements} />
         )}
       </div>
     </>

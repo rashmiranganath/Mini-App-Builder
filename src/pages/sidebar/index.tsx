@@ -1,12 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./sidebar.module.scss";
 import MenuIcon from "../../assets/gripvertical.svg";
 
-const Sidebar = ({ menu, setDraggedElement }) => {
-  const onDragStart = (e, item) => {
-    e.dataTransfer.setData("text/plain", "");
+interface SidebarProps {
+  menu: {
+    id?: string;
+    type: string;
+    title: string;
+    name: string;
+  }[];
+  setDraggedElement: (item: {
+    id: string;
+    type: string;
+    title: string;
+    name: string;
+  }) => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ menu, setDraggedElement }) => {
+  const onDragStart = (e: React.DragEvent<HTMLDivElement>, item: any) => {
+    e.dataTransfer.setData("text/plain", item.id);
     setDraggedElement(item);
   };
+
   return (
     <div className={styles.mainContainer}>
       <h1>BLOCKS</h1>

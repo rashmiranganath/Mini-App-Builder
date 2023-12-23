@@ -1,7 +1,13 @@
+import React, { ReactNode } from "react";
 import styles from "./modal.module.scss";
 import CloseIcon from "../../assets/close.svg";
 
-const Modal = ({ setIsOpen, children }) => {
+interface ModalProps {
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  children: ReactNode;
+}
+
+const Modal: React.FC<ModalProps> = ({ setIsOpen, children }) => {
   return (
     <>
       <div className={styles.overlay} onClick={() => setIsOpen(false)}></div>
@@ -30,4 +36,5 @@ const Modal = ({ setIsOpen, children }) => {
     </>
   );
 };
+
 export default Modal;

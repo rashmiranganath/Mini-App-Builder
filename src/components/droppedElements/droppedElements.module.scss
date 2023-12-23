@@ -1,0 +1,16 @@
+.elementContainer {
+  position: relative;
+}
+
+.focusedElement {
+  &:focus {
+    outline: 2px solid red !important;
+    outline-offset: 0px;
+  }
+}
+.focusedLabel input:focus + label {
+  border: 2px solid red !important;
+}
+.focusedLabel :focus-within {
+  border: 2px solid red !important;
+}

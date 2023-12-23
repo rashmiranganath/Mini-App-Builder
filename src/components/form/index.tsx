@@ -1,31 +1,44 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import InputField from "../input";
 
-const CustomForm = ({ elementInfo, onSubmit, isModalClosed }) => {
-  const [inputValue, setInputValue] = useState({});
+interface CustomFormProps {
+  elementInfo: Array<{ label: string; value: string }>;
+  onSubmit: (data: Record<string, string>) => void;
+  isModalClosed: boolean;
+}
+
+const CustomForm: React.FC<CustomFormProps> = ({
+  elementInfo,
+  onSubmit,
+  isModalClosed,
+}) => {
+  const [inputValue, setInputValue] = useState<Record<string, string>>({});
+
   useEffect(() => {
     const initialInputValues = elementInfo.reduce((acc, item) => {
       acc[item.label] = item.value || "";
       return acc;
-    }, {});
+    }, {} as Record<string, string>);
     setInputValue(initialInputValues);
   }, [elementInfo]);
 
   useEffect(() => {
     if (isModalClosed) {
-      console.log("kkskks");
-      onSubmit(elementInfo);
+      const data = elementInfo.reduce((acc, item) => {
+        acc[item.label] = item.value || "";
+        return acc;
+      }, {} as Record<string, string>);
+      onSubmit(data);
     }
-  }, [isModalClosed]);
+  }, [isModalClosed, elementInfo, onSubmit]);
 
   useEffect(() => {
     if (isModalClosed) {
       onSubmit(inputValue);
     }
-  }, [inputValue]);
+  }, [isModalClosed, inputValue, onSubmit]);
 
-  const handleChange = (e) => {
-    console.log(e.target.name, e.target.value);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     setInputValue((prev) => ({
@@ -34,8 +47,7 @@ const CustomForm = ({ elementInfo, onSubmit, isModalClosed }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    console.log("handle submit");
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     onSubmit(inputValue);
   };

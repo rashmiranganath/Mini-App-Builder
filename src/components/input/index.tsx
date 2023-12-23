@@ -1,6 +1,22 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 
-const InputField = ({ value, label, name, placeholder, type, onChange }) => (
+interface InputFieldProps {
+  value: string;
+  label?: string;
+  name: string;
+  placeholder?: string;
+  type: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+
+const InputField: React.FC<InputFieldProps> = ({
+  value,
+  label,
+  name,
+  placeholder,
+  type,
+  onChange,
+}) => (
   <div className="form-group">
     {label && <label htmlFor="input-field">{label}</label>}
     <input
