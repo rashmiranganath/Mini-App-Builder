@@ -1,4 +1,4 @@
-import React, { useEffect, useState, DragEvent } from "react";
+import React, { useState, DragEvent, useEffect } from "react";
 import styles from "./miniAppbuilder.module.scss";
 import Modal from "../../components/modal";
 import CustomForm from "../../components/form";
@@ -13,28 +13,40 @@ interface MiniAppBuilderProps {
   };
 }
 
+interface ElementDetails {
+  text: string;
+  X: string;
+  Y: string;
+  "Font size": string;
+  "Font Weight": string;
+}
+
 const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
   isdraggedElement,
 }) => {
   const [droppedElements, setDroppedElements] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [elementInfo, setElementInfo] = useState<ElementDetails>({
+    text: "",
+    X: "",
+    Y: "",
+    "Font size": "",
+    "Font Weight": "",
+  });
+  const [ele, setEle] = useState({});
 
-  const [elementInfo, setElementInfo] = useState<
-    Array<{ label: string; value: string }>
-  >([
-    { label: "text", value: "" },
-    { label: "X", value: "" },
-    { label: "Y", value: "" },
-    { label: "Font size", value: "" },
-    { label: "Font Weight", value: "" },
-  ]);
+  useEffect(() => {
+    setEle(isdraggedElement);
+  }, [isdraggedElement]);
+
+  useEffect(() => {
+    // Save to localStorage whenever droppedElements change
+    localStorage.setItem("droppedElements", JSON.stringify(droppedElements));
+  }, [droppedElements]);
 
   const onDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-
     const draggedElementId = e.dataTransfer.getData("text/plain");
-    console.log(draggedElementId);
-
     if (draggedElementId) {
       const mouseX = e.clientX;
       const mouseY = e.clientY;
@@ -50,8 +62,8 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
                 ...item,
                 elementdetails: {
                   ...item.elementdetails,
-                  X: mouseX,
-                  Y: mouseY,
+                  X: mouseX.toString(),
+                  Y: mouseY.toString(),
                 },
               }
             : item
@@ -59,17 +71,14 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
 
         setDroppedElements(updatedElements);
       } else {
-        setElementInfo((prevState) => [
-          ...prevState.map((item) => {
-            if (item.label === "X") {
-              return { ...item, value: mouseX };
-            } else if (item.label === "Y") {
-              return { ...item, value: mouseY };
-            } else {
-              return item;
-            }
-          }),
-        ]);
+        setElementInfo((prevElementInfo) => ({
+          ...prevElementInfo,
+          text: "",
+          X: mouseX.toString(),
+          Y: mouseY.toString(),
+          "Font size": "",
+          "Font Weight": "",
+        }));
 
         setIsOpen(true);
       }
@@ -81,11 +90,8 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
   };
 
   const handleSubmit = (values: any) => {
-    console.log(values, "values");
     setDroppedElements((prev) => {
-      const indexToUpdate = prev.findIndex(
-        (el) => el.element.id === isdraggedElement.id
-      );
+      const indexToUpdate = prev.findIndex((el) => el.element.id === ele?.id);
 
       if (indexToUpdate !== -1) {
         const updatedElements = [...prev];
@@ -95,9 +101,22 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
         };
         return updatedElements;
       } else {
-        return [...prev, { element: isdraggedElement, elementdetails: values }];
+        return [...prev, { element: ele, elementdetails: values }];
       }
     });
+  };
+
+  const handleSelectedElement = (e, id: any, selectedElement) => {
+    if (e.key === "Enter") {
+      setEle(selectedElement.element);
+      setElementInfo(selectedElement.elementdetails);
+      setIsOpen(true);
+    } else if (e.key === "Delete" || e.keyCode === 46) {
+      const filteredElements = droppedElements.filter(
+        (ele) => ele.element.id !== id
+      );
+      setDroppedElements(filteredElements);
+    }
   };
 
   return (
@@ -118,7 +137,10 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
           </Modal>
         )}
         {!isOpen && droppedElements.length > 0 && (
-          <DropZone droppedElements={droppedElements} />
+          <DropZone
+            droppedElements={droppedElements}
+            selectedElement={handleSelectedElement}
+          />
         )}
       </div>
     </>

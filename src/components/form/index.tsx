@@ -2,7 +2,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import InputField from "../input";
 
 interface CustomFormProps {
-  elementInfo: Array<{ label: string; value: string }>;
+  elementInfo: Record<string, string>;
   onSubmit: (data: Record<string, string>) => void;
   isModalClosed: boolean;
 }
@@ -15,28 +15,14 @@ const CustomForm: React.FC<CustomFormProps> = ({
   const [inputValue, setInputValue] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const initialInputValues = elementInfo.reduce((acc, item) => {
-      acc[item.label] = item.value || "";
-      return acc;
-    }, {} as Record<string, string>);
-    setInputValue(initialInputValues);
+    setInputValue(elementInfo);
   }, [elementInfo]);
-
-  useEffect(() => {
-    if (isModalClosed) {
-      const data = elementInfo.reduce((acc, item) => {
-        acc[item.label] = item.value || "";
-        return acc;
-      }, {} as Record<string, string>);
-      onSubmit(data);
-    }
-  }, [isModalClosed, elementInfo, onSubmit]);
 
   useEffect(() => {
     if (isModalClosed) {
       onSubmit(inputValue);
     }
-  }, [isModalClosed, inputValue, onSubmit]);
+  }, [isModalClosed, inputValue]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -54,14 +40,14 @@ const CustomForm: React.FC<CustomFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      {elementInfo.map((item, index) => (
+      {Object.entries(elementInfo).map(([label, defaultValue], index) => (
         <div key={index}>
           <InputField
             type="text"
-            value={inputValue[item.label] || ""}
-            placeholder={item.value || ""}
-            label={item.label}
-            name={item.label}
+            value={inputValue[label] || defaultValue}
+            placeholder={inputValue[label] || defaultValue}
+            label={label}
+            name={label}
             onChange={handleChange}
           />
         </div>

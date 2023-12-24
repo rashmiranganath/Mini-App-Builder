@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import styles from "./droppedElements.module.scss";
-import MiniAppBuilder from "../../pages/page-builder";
-import ReactDOM from "react-dom";
 
 interface ElementDetails {
   [key: string]: string;
@@ -21,51 +19,33 @@ interface DroppedElement {
 
 interface DropZoneProps {
   droppedElements: DroppedElement[];
-  // setDraggedElement: (e: React.DragEvent, item: DroppedElement) => void;
+  selectedElement: (e: React.KeyboardEvent, id: string, ele: any) => void;
 }
 
-const DropZone: React.FC<DropZoneProps> = ({ droppedElements }) => {
-  const [containerContent] = useState<React.ReactNode[]>([]);
-
+const DropZone: React.FC<DropZoneProps> = ({
+  droppedElements,
+  selectedElement,
+}) => {
   useEffect(() => {
+    console.log("lll", droppedElements);
     const container = document.getElementById("dynamicElementsContainer");
 
-    const existingNodesMap = new Map();
-    Array.from(container?.children || []).forEach((node) => {
-      const elementId = (node as HTMLElement).getAttribute("data-element-id");
-      existingNodesMap.set(elementId, node);
-    });
+    droppedElements.length > 0 &&
+      droppedElements.forEach((ele) => {
+        const elementId = ele.element.id;
 
-    droppedElements.forEach((ele) => {
-      const elementId = ele.element.id;
-      const existingNode = existingNodesMap.get(elementId) as HTMLElement;
-
-      if (existingNode) {
-        const { X, Y } = ele.elementdetails;
-        existingNode.style.left = `${X}px`;
-        existingNode.style.top = `${Y}px`;
-      } else {
+        const existingNode = document.getElementById(elementId);
+        if (existingNode?.parentNode) {
+          existingNode?.parentNode.removeChild(existingNode);
+        }
         const element = createElementComponent(ele);
-        element && element.setAttribute("data-element-id", elementId);
+
+        element && element.setAttribute("id", elementId);
         container?.appendChild(element);
-      }
-    });
-
-    existingNodesMap.forEach((node) => {
-      const elementId = (node as HTMLElement).getAttribute("data-element-id");
-
-      if (!droppedElements.some((ele) => ele.element.id === elementId)) {
-        (node as HTMLElement).style.display = "none";
-      } else {
-        (node as HTMLElement).style.display = "block";
-      }
-    });
+      });
   }, [droppedElements]);
-
-  const handleElementClick = (elementId: string, item: DroppedElement) => {
-    console.log("Element clicked:", elementId);
-
-    // Add your click handling logic here
+  const handleElementClick = (e, elementId: string, ele) => {
+    selectedElement(e, elementId, ele);
   };
 
   const dragStart = (e: React.DragEvent, item: DroppedElement) => {
@@ -74,8 +54,8 @@ const DropZone: React.FC<DropZoneProps> = ({ droppedElements }) => {
 
   const createElementComponent = (item: DroppedElement) => {
     const elementStyles = {
-      fontSize: `${item.elementdetails["Font Size"]}px`,
-      fontWeight: `${item.elementdetails["Font Weight"]}`,
+      "font-size": `${item.elementdetails["Font size"]}px`,
+      "font-weight": `${item.elementdetails["Font Weight"]}`,
       position: "absolute",
       left: `${item.elementdetails.X}px`,
       top: `${item.elementdetails.Y}px`,
@@ -96,10 +76,13 @@ const DropZone: React.FC<DropZoneProps> = ({ droppedElements }) => {
         inputElement.addEventListener("dragstart", (event) =>
           dragStart(event, item)
         );
-        inputElement.addEventListener("click", () =>
-          handleElementClick(item.element.id, item)
-        );
-        inputElement.setAttribute("data-test-id", item.element.id); // Set the id attribute
+        inputElement.addEventListener("keypress", (e) => {
+          handleElementClick(e, item.element.id, item);
+        });
+        inputElement.addEventListener("keyup", (e) => {
+          handleElementClick(e, item.element.id, item);
+        });
+        inputElement.setAttribute("id", item.element.id);
 
         inputElement.classList.add(styles.focusedElement);
         return inputElement;
@@ -116,10 +99,13 @@ const DropZone: React.FC<DropZoneProps> = ({ droppedElements }) => {
         buttonElement.addEventListener("dragstart", (event) =>
           dragStart(event, item)
         );
-        buttonElement.addEventListener("click", () =>
-          handleElementClick(item.element.id, item)
-        );
-        buttonElement.setAttribute("data-test-id", item.element.id);
+        buttonElement.addEventListener("keypress", (e) => {
+          handleElementClick(e, item.element.id, item);
+        });
+        buttonElement.addEventListener("keyup", (e) => {
+          handleElementClick(e, item.element.id, item);
+        });
+        buttonElement.setAttribute("id", item.element.id);
         buttonElement.classList.add(styles.focusedElement);
         buttonElement.textContent =
           item.elementdetails.text || item.element.title;
@@ -137,10 +123,13 @@ const DropZone: React.FC<DropZoneProps> = ({ droppedElements }) => {
         labelElement.addEventListener("dragstart", (event) =>
           dragStart(event, item)
         );
-        labelElement.setAttribute("data-test-id", item.element.id);
-        labelElement.addEventListener("click", () =>
-          handleElementClick(item.element.id, item)
-        );
+        labelElement.setAttribute("id", item.element.id);
+        labelElement.addEventListener("keypress", (e) => {
+          handleElementClick(e, item.element.id, item);
+        });
+        labelElement.addEventListener("keyup", (e) => {
+          handleElementClick(e, item.element.id, item);
+        });
         labelElement.classList.add(styles.focusedLabel);
         labelElement.textContent =
           item.elementdetails.text || item.element.title;
@@ -152,7 +141,7 @@ const DropZone: React.FC<DropZoneProps> = ({ droppedElements }) => {
     }
   };
 
-  return <div id="dynamicElementsContainer">{containerContent}</div>;
+  return <div />;
 };
 
 export default DropZone;
