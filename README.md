@@ -1,30 +1,85 @@
-# React + TypeScript + Vite
+# Project Name
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple project using Vite, React, TypeScript, and SWC.
 
-Currently, two official plugins are available:
+**Current Version:** 1.0.0
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Table of Contents
 
-## Expanding the ESLint configuration
+- [Overview](#overview)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Usage](#usage)
+- [Folder Structure](#folder-structure)
+- [Configuration](#configuration)
+- [Scripts](#scripts)
+- [Contributing](#contributing)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Overview
 
-- Configure the top-level `parserOptions` property like this:
+This project is a minimal setup using Vite as the build tool, React as the UI library, TypeScript for type-checking, and SWC as the JavaScript/TypeScript compiler.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+## Getting Started
+
+### Prerequisites
+
+Make sure you have Node.js and npm installed on your machine.
+
+- [Node.js](https://nodejs.org/)
+- [npm](https://www.npmjs.com/)
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/your-username/project-name.git
+
+   ```
+
+2. Navigate to the folder:
+
+   ```bash
+    cd project-name
+
+   ```
+
+3. Install dependencies:
+
+```bash
+  npm install
+
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Usage
+
+1. Run the development server:
+
+```bash
+  npm run dev
+
+```
+
+Open your browser and visit http://localhost:3000 to see the application.
+
+## Folder Structure
+
+- `src`: Contains the source code for the project.
+  - `components`: React components.
+  - `styles`: Stylesheets (CSS, SCSS, etc.).
+  - `App.tsx`: Main React component.
+  - `index.tsx`: Entry point of the application.
+- `public`: Static assets.
+
+## Configuration
+
+- Vite configuration is in the `vite.config.js` file.
+- SWC configuration is in the `swc.config.js` file.
+- Additional configuration options for React and TypeScript can be found in their respective configuration files (`tsconfig.json`, `react-app-env.d.ts`).
+
+## Scripts
+
+- `npm run dev`: Start the development server.
+- `npm run build`: Build the project for production.
+- `npm run serve`: Serve the production build locally.
