@@ -1,16 +1,21 @@
 .elementContainer {
   position: relative;
 }
-
 .focusedElement {
   &:focus {
-    outline: 2px solid red !important;
+    outline: 2px solid var(--red) !important;
     outline-offset: 0px;
   }
 }
-.focusedLabel input:focus + label {
-  border: 2px solid red !important;
+.inputField {
+  outline: none !important;
 }
-.focusedLabel :focus-within {
-  border: 2px solid red !important;
+.label {
+  border: 2px solid transparent;
+  &:focus-within {
+    border: 2px solid var(--red) !important;
+  }
+  &:focus-visible {
+    outline: none;
+  }
 }

@@ -37,10 +37,15 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
 
   useEffect(() => {
     setEle(isdraggedElement);
+    if (isdraggedElement && isdraggedElement.title) {
+      setElementInfo((prevElementInfo) => ({
+        ...prevElementInfo,
+        text: isdraggedElement.title,
+      }));
+    }
   }, [isdraggedElement]);
 
   useEffect(() => {
-    // Save to localStorage whenever droppedElements change
     localStorage.setItem("droppedElements", JSON.stringify(droppedElements));
   }, [droppedElements]);
 
@@ -92,7 +97,6 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
   const handleSubmit = (values: any) => {
     setDroppedElements((prev) => {
       const indexToUpdate = prev.findIndex((el) => el.element.id === ele?.id);
-
       if (indexToUpdate !== -1) {
         const updatedElements = [...prev];
         updatedElements[indexToUpdate] = {

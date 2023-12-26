@@ -13,7 +13,7 @@ const Modal: React.FC<ModalProps> = ({ setIsOpen, children }) => {
       <div className={styles.overlay} onClick={() => setIsOpen(false)}></div>
       <div className={styles.modalContainer}>
         <div className={styles.modalHeader}>
-          <h5 className={styles.heading}>Dialog</h5>
+          <h5 className={styles.heading}>Edit Label</h5>
           <img
             src={CloseIcon}
             alt="closeIcon"

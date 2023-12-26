@@ -44,7 +44,7 @@ const CustomForm: React.FC<CustomFormProps> = ({
         <div key={index}>
           <InputField
             type="text"
-            value={inputValue[label] || defaultValue}
+            value={inputValue[label]}
             placeholder={inputValue[label] || defaultValue}
             label={label}
             name={label}

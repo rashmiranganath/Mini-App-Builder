@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./droppedElements.module.scss";
 
 interface ElementDetails {
@@ -26,25 +26,31 @@ const DropZone: React.FC<DropZoneProps> = ({
   droppedElements,
   selectedElement,
 }) => {
+  const [labelFocused, setLabeFocused] = useState(false);
   useEffect(() => {
-    console.log("lll", droppedElements);
     const container = document.getElementById("dynamicElementsContainer");
 
-    droppedElements.length > 0 &&
+    droppedElements.length &&
       droppedElements.forEach((ele) => {
         const elementId = ele.element.id;
-
         const existingNode = document.getElementById(elementId);
         if (existingNode?.parentNode) {
           existingNode?.parentNode.removeChild(existingNode);
         }
         const element = createElementComponent(ele);
-
         element && element.setAttribute("id", elementId);
         container?.appendChild(element);
       });
-  }, [droppedElements]);
+  }, [droppedElements, labelFocused]);
+
   const handleElementClick = (e, elementId: string, ele) => {
+    if (e.keyCode === 46) {
+      selectedElement(e, elementId, ele);
+      const existingNode = document.getElementById(elementId);
+      if (existingNode?.parentNode) {
+        existingNode?.parentNode.removeChild(existingNode);
+      }
+    }
     selectedElement(e, elementId, ele);
   };
 
@@ -83,7 +89,6 @@ const DropZone: React.FC<DropZoneProps> = ({
           handleElementClick(e, item.element.id, item);
         });
         inputElement.setAttribute("id", item.element.id);
-
         inputElement.classList.add(styles.focusedElement);
         return inputElement;
 
@@ -120,28 +125,34 @@ const DropZone: React.FC<DropZoneProps> = ({
             .map(([key, value]) => `${key}:${value}`)
             .join(";")
         );
+        labelElement.setAttribute("tabindex", "0");
         labelElement.addEventListener("dragstart", (event) =>
           dragStart(event, item)
         );
         labelElement.setAttribute("id", item.element.id);
+        const interactiveElement = document.createElement("input");
+        interactiveElement.type = "text";
+        interactiveElement.addEventListener("keypress", (e) => {
+          handleElementClick(e, item.element.id, item);
+        });
         labelElement.addEventListener("keypress", (e) => {
           handleElementClick(e, item.element.id, item);
         });
+
         labelElement.addEventListener("keyup", (e) => {
           handleElementClick(e, item.element.id, item);
         });
-        labelElement.classList.add(styles.focusedLabel);
+        labelElement.classList.add(styles.label);
         labelElement.textContent =
           item.elementdetails.text || item.element.title;
         return labelElement;
-
       default:
         console.error("Unsupported type: " + item.element.type);
         return null;
     }
   };
 
-  return <div />;
+  return;
 };
 
 export default DropZone;

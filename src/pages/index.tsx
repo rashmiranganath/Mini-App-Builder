@@ -22,12 +22,12 @@ const HomePage: React.FC<HomePageProps> = () => {
     },
     {
       type: "button",
-      title: "button",
+      title: "Button",
       name: "Button",
     },
     {
       type: "label",
-      title: "label",
+      title: "This is a label",
       name: "Label",
     },
   ]);
