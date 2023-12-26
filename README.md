@@ -66,16 +66,15 @@ Open your browser and visit http://localhost:3000 to see the application.
 
 - `src`: Contains the source code for the project.
   - `components`: React components.
-  - `styles`: Stylesheets (CSS, SCSS, etc.).
+  - `scss`: Stylesheets (CSS, SCSS, etc.).
   - `App.tsx`: Main React component.
-  - `index.tsx`: Entry point of the application.
-- `public`: Static assets.
+  - `main.tsx`: Entry point of the application.
 
 ## Configuration
 
 - Vite configuration is in the `vite.config.js` file.
 - SWC configuration is in the `swc.config.js` file.
-- Additional configuration options for React and TypeScript can be found in their respective configuration files (`tsconfig.json`, `react-app-env.d.ts`).
+- Additional configuration options for React and TypeScript can be found in their respective configuration files (`tsconfig.json`).
 
 ## Scripts
 
