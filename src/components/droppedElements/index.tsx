@@ -26,7 +26,7 @@ const DropZone: React.FC<DropZoneProps> = ({
   droppedElements,
   selectedElement,
 }) => {
-  const [labelFocused, setLabeFocused] = useState(false);
+  // const [labelFocused, setLabeFocused] = useState(false);
   useEffect(() => {
     const container = document.getElementById("dynamicElementsContainer");
 
@@ -41,7 +41,7 @@ const DropZone: React.FC<DropZoneProps> = ({
         element && element.setAttribute("id", elementId);
         container?.appendChild(element);
       });
-  }, [droppedElements, labelFocused]);
+  }, [droppedElements]);
 
   const handleElementClick = (e, elementId: string, ele) => {
     if (e.keyCode === 46) {
