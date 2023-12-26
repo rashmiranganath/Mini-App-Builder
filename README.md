@@ -14,7 +14,6 @@ A simple project using Vite, React, TypeScript, and SWC for drag and dropping pr
 - [Folder Structure](#folder-structure)
 - [Configuration](#configuration)
 - [Scripts](#scripts)
-- [Contributing](#contributing)
 
 ## Overview
 
