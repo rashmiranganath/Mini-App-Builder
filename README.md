@@ -1,6 +1,6 @@
-# Project Name
+# Mini App Builder
 
-A simple project using Vite, React, TypeScript, and SWC.
+A simple project using Vite, React, TypeScript, and SWC for drag and dropping presdescribed elements for people who are not into tech but still they can build UI using this elements.
 
 **Current Version:** 1.0.0
 
