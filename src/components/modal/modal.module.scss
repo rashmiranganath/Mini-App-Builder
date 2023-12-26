@@ -10,7 +10,7 @@
 }
 .modalContainer {
   min-width: 424px;
-  background: white;
+  background: var(--white);
   z-index: 10;
   border-radius: 5px;
   box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.04);
@@ -23,7 +23,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.125rem 1.438rem 1.375rem 1.313rem;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid var(--black);
     .heading {
       margin: 0;
       font-family: Open Sans;
@@ -36,18 +36,13 @@
   }
 
   .modal {
-    padding: 1.563rem 1.5rem 2.125rem 1.313rem;
-  }
-  .modalActions {
-    // position: absolute;
-    // bottom: 2px;
-    // margin-bottom: 10px;
-    // width: 100%;
+    padding: 1.563rem 1.5rem 0 1.313rem;
   }
 
   .actionsContainer {
     display: flex;
     align-items: center;
+    margin: 3.125rem 1.563rem 2.125rem;
   }
   button {
     display: flex;
@@ -56,7 +51,7 @@
     gap: 4px;
     padding: 0.5rem 1rem;
     border-radius: 2px;
-    background: #0044c1;
+    background: var(--blue);
     border: none;
     color: var(--white);
   }

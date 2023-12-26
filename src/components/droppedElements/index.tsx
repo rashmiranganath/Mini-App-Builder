@@ -111,7 +111,7 @@ const DropZone: React.FC<DropZoneProps> = ({
           handleElementClick(e, item.element.id, item);
         });
         buttonElement.setAttribute("id", item.element.id);
-        buttonElement.classList.add(styles.focusedElement);
+        buttonElement.classList.add(styles.buttonElement);
         buttonElement.textContent =
           item.elementdetails.text || item.element.title;
         return buttonElement;

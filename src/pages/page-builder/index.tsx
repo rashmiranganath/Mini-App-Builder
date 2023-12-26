@@ -37,12 +37,6 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
 
   useEffect(() => {
     setEle(isdraggedElement);
-    if (isdraggedElement && isdraggedElement.title) {
-      setElementInfo((prevElementInfo) => ({
-        ...prevElementInfo,
-        text: isdraggedElement.title,
-      }));
-    }
   }, [isdraggedElement]);
 
   useEffect(() => {
@@ -78,7 +72,7 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
       } else {
         setElementInfo((prevElementInfo) => ({
           ...prevElementInfo,
-          text: "",
+          text: isdraggedElement.title,
           X: mouseX.toString(),
           Y: mouseY.toString(),
           "Font size": "",

@@ -40,12 +40,12 @@ const CustomForm: React.FC<CustomFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      {Object.entries(elementInfo).map(([label, defaultValue], index) => (
+      {Object.entries(elementInfo).map(([label], index) => (
         <div key={index}>
           <InputField
             type="text"
             value={inputValue[label]}
-            placeholder={inputValue[label] || defaultValue}
+            placeholder={inputValue[label]}
             label={label}
             name={label}
             onChange={handleChange}
