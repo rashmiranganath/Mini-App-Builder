@@ -3,6 +3,7 @@ import styles from "./miniAppbuilder.module.scss";
 import Modal from "../../components/modal";
 import CustomForm from "../../components/form";
 import DropZone from "../../components/droppedElements";
+import { v4 as uuidv4 } from "uuid";
 
 interface MiniAppBuilderProps {
   isdraggedElement: {
@@ -21,10 +22,29 @@ interface ElementDetails {
   "Font Weight": string;
 }
 
+interface SelectedElement {
+  element: {
+    id: string;
+    type: string;
+    title: string;
+    name: string;
+  };
+  elementdetails: ElementDetails;
+}
+interface DroppedElement {
+  element: {
+    id: string;
+    type: string;
+    title: string;
+    name: string;
+  };
+  elementdetails: ElementDetails;
+}
+
 const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
   isdraggedElement,
 }) => {
-  const [droppedElements, setDroppedElements] = useState<any[]>([]);
+  const [droppedElements, setDroppedElements] = useState<DroppedElement[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [elementInfo, setElementInfo] = useState<ElementDetails>({
     text: "",
@@ -33,54 +53,69 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
     "Font size": "",
     "Font Weight": "",
   });
-  const [ele, setEle] = useState({});
+  const [draggedElement, setDraggedElement] = useState<{
+    id?: string;
+    type: string;
+    title: string;
+    name: string;
+  }>({});
 
   useEffect(() => {
-    setEle(isdraggedElement);
+    setDraggedElement(isdraggedElement);
   }, [isdraggedElement]);
 
   useEffect(() => {
     localStorage.setItem("droppedElements", JSON.stringify(droppedElements));
   }, [droppedElements]);
 
+  const updateExistingElement = (
+    mouseX: string,
+    mouseY: string,
+    draggedElementId: string
+  ) => {
+    const updatedElements = droppedElements.map((item) =>
+      item?.element?.id === draggedElementId
+        ? {
+            ...item,
+            elementdetails: {
+              ...item?.elementdetails,
+              X: mouseX.toString(),
+              Y: mouseY.toString(),
+            },
+          }
+        : item
+    );
+
+    setDroppedElements(updatedElements);
+  };
+  const addNewElement = (mouseX: number, mouseY: number) => {
+    setElementInfo((prevElementInfo) => ({
+      ...prevElementInfo,
+      text: draggedElement?.title,
+      X: mouseX.toString(),
+      Y: mouseY.toString(),
+      "Font size": "",
+      "Font Weight": "",
+    }));
+
+    setIsOpen(true);
+  };
   const onDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const draggedElementId = e.dataTransfer.getData("text/plain");
-    if (draggedElementId) {
-      const mouseX = e.clientX;
-      const mouseY = e.clientY;
-
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+    if (draggedElementId !== "undefined") {
       const existingElement = droppedElements.find(
-        (el) => el.element.id === draggedElementId
+        (el) => el?.element.id === draggedElementId
       );
-
       if (existingElement) {
-        const updatedElements = droppedElements.map((item) =>
-          item.element.id === draggedElementId
-            ? {
-                ...item,
-                elementdetails: {
-                  ...item.elementdetails,
-                  X: mouseX.toString(),
-                  Y: mouseY.toString(),
-                },
-              }
-            : item
-        );
-
-        setDroppedElements(updatedElements);
-      } else {
-        setElementInfo((prevElementInfo) => ({
-          ...prevElementInfo,
-          text: isdraggedElement.title,
-          X: mouseX.toString(),
-          Y: mouseY.toString(),
-          "Font size": "",
-          "Font Weight": "",
-        }));
-
-        setIsOpen(true);
+        updateExistingElement(mouseX, mouseY, draggedElementId);
       }
+    } else {
+      setDraggedElement({ ...draggedElement, id: uuidv4() });
+      e.dataTransfer.setData("text/plain", draggedElement?.id);
+      addNewElement(mouseX, mouseY);
     }
   };
 
@@ -90,7 +125,9 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
 
   const handleSubmit = (values: any) => {
     setDroppedElements((prev) => {
-      const indexToUpdate = prev.findIndex((el) => el.element.id === ele?.id);
+      const indexToUpdate = prev.findIndex(
+        (element) => element.element.id === draggedElement?.id
+      );
       if (indexToUpdate !== -1) {
         const updatedElements = [...prev];
         updatedElements[indexToUpdate] = {
@@ -99,19 +136,23 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
         };
         return updatedElements;
       } else {
-        return [...prev, { element: ele, elementdetails: values }];
+        return [...prev, { element: draggedElement, elementdetails: values }];
       }
     });
   };
 
-  const handleSelectedElement = (e, id: any, selectedElement) => {
+  const handleSelectedElement = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    id: string,
+    selectedElement: SelectedElement
+  ) => {
     if (e.key === "Enter") {
-      setEle(selectedElement.element);
+      setDraggedElement(selectedElement.element);
       setElementInfo(selectedElement.elementdetails);
       setIsOpen(true);
     } else if (e.key === "Delete" || e.keyCode === 46) {
       const filteredElements = droppedElements.filter(
-        (ele) => ele.element.id !== id
+        (ele) => ele?.element?.id !== id
       );
       setDroppedElements(filteredElements);
     }

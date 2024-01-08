@@ -4,13 +4,11 @@ import MenuIcon from "../../assets/gripvertical.svg";
 
 interface SidebarProps {
   menu: {
-    id?: string;
     type: string;
     title: string;
     name: string;
   }[];
   setDraggedElement: (item: {
-    id: string;
     type: string;
     title: string;
     name: string;

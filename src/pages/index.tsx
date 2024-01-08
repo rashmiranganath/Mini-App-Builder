@@ -35,13 +35,13 @@ const HomePage: React.FC<HomePageProps> = () => {
   const [draggedElement, setDraggedElement] = useState<Partial<Element>>({});
 
   const handleDraggedElement = (item: Element) => {
-    const newElement: Element = {
-      id: uuidv4(),
-      type: item.type,
-      title: item.title,
-      name: item.name,
-    };
-    setDraggedElement(newElement);
+    // const newElement: Element = {
+    //   id: uuidv4(),
+    //   type: item.type,
+    //   title: item.title,
+    //   name: item.name,
+    // };
+    setDraggedElement(item);
   };
 
   return (
