@@ -1,9 +1,19 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import InputField from "../input";
 
+// interface ElementDetails {
+//   text: string;
+//   X: string | number;
+//   Y: string | number;
+//   "Font size": string;
+//   "Font Weight": string;
+// }
+interface ElementDetails {
+  [key: string]: string;
+}
 interface CustomFormProps {
-  elementInfo: Record<string, string>;
-  onSubmit: (data: Record<string, string>) => void;
+  elementInfo: ElementDetails;
+  onSubmit: (data: ElementDetails) => void;
   isModalClosed: boolean;
 }
 
@@ -12,7 +22,13 @@ const CustomForm: React.FC<CustomFormProps> = ({
   onSubmit,
   isModalClosed,
 }) => {
-  const [inputValue, setInputValue] = useState<Record<string, string>>({});
+  const [inputValue, setInputValue] = useState<ElementDetails>({
+    text: "",
+    X: "",
+    Y: "",
+    "Font size": "",
+    "Font Weight": "",
+  });
 
   useEffect(() => {
     setInputValue(elementInfo);

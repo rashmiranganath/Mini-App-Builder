@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import styles from "./droppedElements.module.scss";
 import { createDomElement } from "../../utils";
 
@@ -14,23 +14,27 @@ interface Element {
 }
 
 interface DroppedElement {
-  element: Element;
-  elementdetails: ElementDetails;
+  element?: Element;
+  elementdetails?: ElementDetails;
 }
 
 interface DropZoneProps {
-  droppedElements: DroppedElement;
-  selectedElement: (e: React.KeyboardEvent, id: string, ele: any) => void;
+  droppedElements: DroppedElement[];
+  selectedElement: (
+    e: React.KeyboardEvent,
+    id: string,
+    ele: DroppedElement
+  ) => void;
 }
-interface DroppedElement {
-  element: {
-    id: string;
-    type: string;
-    title: string;
-    name: string;
-  };
-  elementdetails: ElementDetails;
-}
+// interface DroppedElement {
+//   element?: {
+//     id: string;
+//     type: string;
+//     title: string;
+//     name: string;
+//   };
+//   elementdetails?: ElementDetails;
+// }
 
 const DropZone: React.FC<DropZoneProps> = ({
   droppedElements,
@@ -39,7 +43,7 @@ const DropZone: React.FC<DropZoneProps> = ({
   const handleElementClick = (
     e: React.KeyboardEvent,
     elementId: string,
-    ele
+    ele: DroppedElement
   ) => {
     if (e.keyCode === 46) {
       selectedElement(e, elementId, ele);
@@ -52,7 +56,10 @@ const DropZone: React.FC<DropZoneProps> = ({
   };
 
   const dragStart = (e: React.DragEvent, item: DroppedElement) => {
-    e.dataTransfer.setData("text/plain", item.element.id);
+    const itemId = item?.element?.id;
+    if (itemId) {
+      e.dataTransfer.setData("text/plain", itemId);
+    }
   };
 
   const createElementComponent = (item: DroppedElement) => {
@@ -63,20 +70,24 @@ const DropZone: React.FC<DropZoneProps> = ({
       styles,
       handleElementClick
     );
-    const elementId = item.element.id;
-    const existingNode = document.getElementById(elementId);
-    if (existingNode?.parentNode) {
-      existingNode?.parentNode.replaceChild(element, existingNode);
-    } else {
-      container?.appendChild(element);
+    const elementId = item?.element?.id;
+    if (elementId) {
+      const existingNode = document.getElementById(elementId);
+      if (existingNode?.parentNode) {
+        existingNode?.parentNode.replaceChild(element, existingNode);
+      } else {
+        container?.appendChild(element);
+      }
     }
   };
 
   return (
     <>
-      {droppedElements.length &&
-        droppedElements.map((item) => {
-          <div key={item.element.id}>{createElementComponent(item)}</div>;
+      {droppedElements &&
+        droppedElements?.map((item: DroppedElement) => {
+          <div key={item?.element?.id}>
+            {createElementComponent(item) as ReactNode}
+          </div>;
         })}
     </>
   );

@@ -14,32 +14,36 @@ interface MiniAppBuilderProps {
   };
 }
 
+interface Element {
+  id: string;
+  type: string;
+  title: string;
+  name: string;
+}
 interface ElementDetails {
-  text: string;
-  X: string;
-  Y: string;
-  "Font size": string;
-  "Font Weight": string;
+  [key: string]: string;
+}
+// interface ElementDetails {
+//   text: string;
+//   X: string | number;
+//   Y: string | number;
+//   "Font size": string;
+//   "Font Weight": string;
+// }
+interface DroppedElement {
+  element?: Element;
+  elementdetails?: ElementDetails;
 }
 
-interface SelectedElement {
-  element: {
-    id: string;
-    type: string;
-    title: string;
-    name: string;
-  };
-  elementdetails: ElementDetails;
-}
-interface DroppedElement {
-  element: {
-    id: string;
-    type: string;
-    title: string;
-    name: string;
-  };
-  elementdetails: ElementDetails;
-}
+// interface DroppedElement {
+//   element: {
+//     id?: string;
+//     type: string;
+//     title: string;
+//     name: string;
+//   };
+//   elementdetails: ElementDetails;
+// }
 
 const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
   isdraggedElement,
@@ -53,12 +57,14 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
     "Font size": "",
     "Font Weight": "",
   });
-  const [draggedElement, setDraggedElement] = useState<{
-    id?: string;
-    type: string;
-    title: string;
-    name: string;
-  }>({});
+  const [draggedElement, setDraggedElement] = useState<
+    MiniAppBuilderProps["isdraggedElement"]
+  >({
+    id: "",
+    type: "",
+    title: "",
+    name: "",
+  });
 
   useEffect(() => {
     setDraggedElement(isdraggedElement);
@@ -88,12 +94,12 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
 
     setDroppedElements(updatedElements);
   };
-  const addNewElement = (mouseX: number, mouseY: number) => {
+  const addNewElement = (mouseX: string, mouseY: string) => {
     setElementInfo((prevElementInfo) => ({
       ...prevElementInfo,
       text: draggedElement?.title,
-      X: mouseX.toString(),
-      Y: mouseY.toString(),
+      X: mouseX,
+      Y: mouseY,
       "Font size": "",
       "Font Weight": "",
     }));
@@ -103,18 +109,20 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
   const onDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const draggedElementId = e.dataTransfer.getData("text/plain");
-    const mouseX = e.clientX;
-    const mouseY = e.clientY;
+    const mouseX = e.clientX.toString();
+    const mouseY = e.clientY.toString();
     if (draggedElementId !== "undefined") {
       const existingElement = droppedElements.find(
-        (el) => el?.element.id === draggedElementId
+        (el) => el?.element?.id === draggedElementId
       );
       if (existingElement) {
         updateExistingElement(mouseX, mouseY, draggedElementId);
       }
     } else {
       setDraggedElement({ ...draggedElement, id: uuidv4() });
-      e.dataTransfer.setData("text/plain", draggedElement?.id);
+      if (draggedElement) {
+        e.dataTransfer.setData("text/plain", draggedElement?.id);
+      }
       addNewElement(mouseX, mouseY);
     }
   };
@@ -123,10 +131,10 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
     event.preventDefault();
   };
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: ElementDetails) => {
     setDroppedElements((prev) => {
       const indexToUpdate = prev.findIndex(
-        (element) => element.element.id === draggedElement?.id
+        (element) => element?.element?.id === draggedElement?.id
       );
       if (indexToUpdate !== -1) {
         const updatedElements = [...prev];
@@ -142,13 +150,21 @@ const MiniAppBuilder: React.FC<MiniAppBuilderProps> = ({
   };
 
   const handleSelectedElement = (
-    e: React.KeyboardEvent<HTMLInputElement>,
+    e: React.KeyboardEvent,
     id: string,
-    selectedElement: SelectedElement
+    selectedElement: DroppedElement
   ) => {
     if (e.key === "Enter") {
-      setDraggedElement(selectedElement.element);
-      setElementInfo(selectedElement.elementdetails);
+      setDraggedElement(selectedElement?.element);
+      setElementInfo(
+        selectedElement.elementdetails || {
+          text: "",
+          X: "",
+          Y: "",
+          "Font size": "",
+          "Font Weight": "",
+        }
+      );
       setIsOpen(true);
     } else if (e.key === "Delete" || e.keyCode === 46) {
       const filteredElements = droppedElements.filter(
